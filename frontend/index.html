@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPTX Merger & Converter</title>
+
+<!-- Dependencies -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<!-- Background orbs -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+
+<!-- Toast container -->
+<div id="toastBox" aria-live="polite"></div>
+
+<!-- Processing overlay -->
+<div class="proc-overlay" id="procOverlay">
+  <div class="proc-box">
+    <div class="spinner"></div>
+    <p class="proc-title" id="procTitle">Processing...</p>
+    <p class="proc-sub" id="procSub">This may take a moment</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     HTML — All Pages
+     ══════════════════════════════════════════════ -->
+<div class="app-shell">
+
+  <!-- ── Top Navigation ── -->
+  <nav class="top-nav" aria-label="Main navigation">
+    <div class="top-nav-inner">
+      <a class="nav-logo" href="#" id="navLogo">
+        <span class="nav-logo-icon"><i class="fa-solid fa-layer-group"></i></span>
+        <span class="nav-logo-text">PPTX Merger</span>
+      </a>
+
+      <div class="nav-tabs" id="navTabs">
+        <button class="nav-tab active" data-page="upload" aria-label="Upload step">
+          <span class="tab-n">1</span>
+          <span class="tab-label">Upload</span>
+        </button>
+        <span class="tab-sep" data-sep="1"></span>
+        <button class="nav-tab" data-page="organize" aria-label="Organize step">
+          <span class="tab-n">2</span>
+          <span class="tab-label">Organize</span>
+        </button>
+        <span class="tab-sep" data-sep="2"></span>
+        <button class="nav-tab" data-page="result" aria-label="Results step">
+          <span class="tab-n">3</span>
+          <span class="tab-label">Results</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Pages Container ── -->
+  <div class="pages-container">
+
+    <!-- PAGE 1: Upload -->
+    <section class="page active" id="pageUpload" aria-label="Upload files page">
+      <div class="page-inner">
+
+        <div class="upload-hero">
+          <div class="upload-hero-icon">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+          </div>
+          <h1>Merge Your <span>PowerPoint</span> Files</h1>
+          <p>Upload multiple .pptx files, arrange them in your preferred order, merge into one presentation, and optionally export to PDF.</p>
+        </div>
+
+        <div class="drop-zone" id="dropZone" role="button" tabindex="0"
+             aria-label="Drop PPTX files here or click to browse">
+          <div class="dz-icon"><i class="fa-solid fa-file-powerpoint"></i></div>
+          <p class="dz-text">Drag and drop <span class="dz-browse">.pptx</span> files here</p>
+          <p class="dz-hint">or click to browse &middot; up to 50 files, 100 MB each</p>
+        </div>
+        <input type="file" id="fileInput" multiple accept=".pptx" hidden>
+
+        <div class="upload-tips">
+          <div class="tip-card">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div class="tip-title">Secure Processing</div>
+            <div class="tip-desc">Files are validated and processed server-side, auto-deleted after 2 hours</div>
+          </div>
+          <div class="tip-card">
+            <i class="fa-solid fa-arrows-up-down"></i>
+            <div class="tip-title">Custom Ordering</div>
+            <div class="tip-desc">Drag to reorder or use arrow buttons for precise slide arrangement</div>
+          </div>
+          <div class="tip-card">
+            <i class="fa-solid fa-file-pdf"></i>
+            <div class="tip-title">Optional PDF Export</div>
+            <div class="tip-desc">Convert only when you need it — no unnecessary processing</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PAGE 2: Organize -->
+    <section class="page" id="pageOrganize" aria-label="Organize files page">
+      <div class="page-inner">
+
+        <div class="organize-header">
+          <h2><i class="fa-solid fa-arrows-up-down"></i> Organize Files</h2>
+          <button class="btn-ghost" id="btnAddMore">
+            <i class="fa-solid fa-plus"></i> Add More
+          </button>
+        </div>
+        <p class="organize-hint">
+          <i class="fa-solid fa-circle-info"></i>
+          Drag to reorder or use the arrow buttons. The merge will follow this exact order top-to-bottom.
+        </p>
+
+        <div class="file-list" id="fileList"></div>
+
+        <div class="organize-footer" id="organizeFooter">
+          <div class="file-count-badge" id="fileCountBadge">
+            <i class="fa-solid fa-layer-group"></i>
+            <strong id="fileCountNum">0</strong> files &middot; <strong id="fileCountSlides">0</strong> total slides
+          </div>
+          <button class="btn-outline btn-sm" id="btnBackUpload">
+            <i class="fa-solid fa-arrow-left"></i> Back
+          </button>
+          <button class="btn-accent" id="btnMerge" disabled>
+            <i class="fa-solid fa-code-merge"></i> Merge Files
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PAGE 3: Result -->
+    <section class="page" id="pageResult" aria-label="Merge results page">
+      <div class="page-inner">
+
+        <div class="result-hero">
+          <div class="result-hero-icon">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <h2>Merge Complete</h2>
+          <p id="resultSummary">Your presentation is ready</p>
+        </div>
+
+        <div class="result-stats" id="resultStats">
+          <div class="stat-card">
+            <div class="stat-val" id="statSlides">0</div>
+            <div class="stat-lbl">Total Slides</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="statFiles">0</div>
+            <div class="stat-lbl">Files Merged</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="statWarnings">0</div>
+            <div class="stat-lbl">Warnings</div>
+          </div>
+        </div>
+
+        <div id="warningsArea"></div>
+
+        <!-- Download section -->
+        <div class="result-section">
+          <div class="result-section-title">
+            <i class="fa-solid fa-download"></i> Download Merged File
+          </div>
+          <div class="result-dl-row">
+            <button class="btn-accent" id="btnDlPptx" style="width:100%;">
+              <i class="fa-solid fa-file-powerpoint"></i> Download as PPTX
+            </button>
+          </div>
+        </div>
+
+        <!-- PDF conversion section -->
+        <div class="result-section">
+          <div class="result-section-title">
+            <i class="fa-solid fa-file-pdf"></i> Convert to PDF
+          </div>
+          <p style="font-size:.8rem;color:var(--txt3);margin-bottom:14px;">
+            Conversion triggers only when you click. Requires LibreOffice or PowerPoint on the server.
+          </p>
+          <div id="pdfConvertArea">
+            <button class="btn-outline" id="btnConvertPdf" style="width:100%;">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Convert to PDF
+            </button>
+          </div>
+          <div class="pdf-section hide" id="pdfDownloadArea">
+            <button class="btn-accent" id="btnDlPdf" style="width:100%;">
+              <i class="fa-solid fa-download"></i> Download PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Start over -->
+        <div style="text-align:center;margin-top:12px;">
+          <button class="btn-ghost" id="btnStartOver">
+            <i class="fa-solid fa-arrow-rotate-left"></i> Start Over
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </div><!-- /pages-container -->
+
+  <footer class="app-footer">
+    Files are processed on-server and automatically deleted after 2 hours. No data is stored permanently.
+  </footer>
+
+</div><!-- /app-shell -->
+
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- ══════════════════════════════════════════════
+     JS — All JavaScript
+     ══════════════════════════════════════════════ -->
+<script src="assets/js/config.js"></script>
+<script src="assets/js/script.js"></script>
+</body>
+</html>

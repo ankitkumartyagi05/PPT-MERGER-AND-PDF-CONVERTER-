@@ -1,0 +1,5 @@
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+python-pptx>=0.6.21
+pywin32>=306; sys_platform == "win32"
